@@ -1,6 +1,8 @@
 import os
 from pathlib import Path
+from dotenv import load_dotenv
 
+load_dotenv()
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.getenv('SECRET_KEY')
@@ -10,16 +12,13 @@ DEBUG = os.getenv('DEBUG')
 ALLOWED_HOSTS = ['*']
 
 MY_APPS = [
-    'apps.users',
-    'apps.courses',
-
+    'apps.es',
 ]
 
 THIRD_PARTY_APPS = [
-    'mptt',
     'drf_yasg',
     'rest_framework',
-    'django_filters',
+    'django_elasticsearch_dsl',
 
 ]
 
@@ -104,3 +103,20 @@ MEDIA_URL = 'media/'
 MEDIA_ROOT = os.path.join(BASE_DIR / 'media')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Email Config
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = os.getenv('EMAIL_HOST')
+EMAIL_PORT = os.getenv('EMAIL_PORT')
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_PASSWORD')
+
+# Elasticsearch Config
+
+ELASTICSEARCH_DSL = {
+    'default': {
+        'hosts': 'elasticsearch:9200'
+    },
+}
