@@ -55,22 +55,24 @@ class UserResponseListCreateView(generics.ListCreateAPIView):
     parser_classes = (FormParser, MultiPartParser)
     permission_classes = [IsAuthenticatedOrReadOnly]
 
-    def create(self, request, *args, **kwargs):
-        user = request.user  # authentication is required
-        question_id = request.data.get('question')
-        selected_choice_id = request.data.get('selected_choice')
-        response_time = request.data.get('response_time')
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
 
-        try:
-            question = Question.objects.get(pk=question_id)
-            selected_choice = Choice.objects.get(pk=selected_choice_id)
-        except (Question.DoesNotExist, Choice.DoesNotExist):
-            return Response({'detail': 'Question or Choice does not exist.'}, status=status.HTTP_400_BAD_REQUEST)
+        # Check if this is  last question for the user
+        user_responses_count = UserResponse.objects.filter(user=request.user).count()
+        total_questions = Question.objects.count()
 
-        user_response = UserResponse(user=user, question=question, selected_choice=selected_choice,
-                                     response_time=response_time)
-        user_response.save()
+        if user_responses_count == total_questions:
+            # Calculate  marks and percentage
+            total_marks = UserResponse.objects.filter(user=request.user, question__choice__is_correct=True).count()
+            percentage = (total_marks / total_questions) * 100
 
-        is_correct = selected_choice.is_correct
-        response_data = {'message': 'Response recorded.', 'is_correct': is_correct}
-        return Response(response_data, status=status.HTTP_201_CREATED)
+            return Response({
+                'message': 'Quiz completed!',
+                'total_marks': total_marks,
+                'percentage': percentage,
+            })
+
+        return Response({'message': 'Move to the next Quiz'})
