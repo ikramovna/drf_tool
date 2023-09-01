@@ -1,3 +1,4 @@
+from django.utils import timezone
 from rest_framework import generics, status
 from rest_framework.response import Response
 
@@ -13,6 +14,21 @@ class QuizListCreateView(generics.ListCreateAPIView):
 class QuestionListCreateView(generics.ListCreateAPIView):
     queryset = Question.objects.all()
     serializer_class = QuestionSerializer
+
+    def start_timer(self, request, pk=None):
+        question = self.get_object()
+        question.start_time = timezone.now()
+        question.save()
+        return Response({'message': 'Timer started.'})
+
+    def get_remaining_time(self, request, pk=None):
+        question = self.get_object()
+        if not question.start_time:
+            return Response({'message': 'Timer not started.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        elapsed_time = (timezone.now() - question.start_time).total_seconds()
+        remaining_time = question.time_limit - elapsed_time
+        return Response({'remaining_time': remaining_time})
 
 
 class ChoiceListCreateView(generics.ListCreateAPIView):
