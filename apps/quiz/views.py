@@ -25,7 +25,7 @@ class UserResponseListCreateView(generics.ListCreateAPIView):
     serializer_class = UserResponseSerializer
 
     def create(self, request, *args, **kwargs):
-        user = request.user  # Assuming authentication is required
+        user = request.user  # authentication is required
         question_id = request.data.get('question')
         selected_choice_id = request.data.get('selected_choice')
         response_time = request.data.get('response_time')
