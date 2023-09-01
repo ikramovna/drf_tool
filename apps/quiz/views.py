@@ -1,19 +1,28 @@
 from django.utils import timezone
 from rest_framework import generics, status
+from rest_framework.parsers import FormParser, MultiPartParser
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 
 from .models import Quiz, Question, Choice, UserResponse
+from .pagination import CustomPagination
 from .serializers import QuizSerializer, QuestionSerializer, ChoiceSerializer, UserResponseSerializer
 
 
 class QuizListCreateView(generics.ListCreateAPIView):
     queryset = Quiz.objects.all()
     serializer_class = QuizSerializer
+    pagination_class = CustomPagination
+    parser_classes = (FormParser, MultiPartParser)
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
 
 class QuestionListCreateView(generics.ListCreateAPIView):
     queryset = Question.objects.all()
     serializer_class = QuestionSerializer
+    pagination_class = CustomPagination
+    parser_classes = (FormParser, MultiPartParser)
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
     def start_timer(self, request, pk=None):
         question = self.get_object()
@@ -34,11 +43,17 @@ class QuestionListCreateView(generics.ListCreateAPIView):
 class ChoiceListCreateView(generics.ListCreateAPIView):
     queryset = Choice.objects.all()
     serializer_class = ChoiceSerializer
+    pagination_class = CustomPagination
+    parser_classes = (FormParser, MultiPartParser)
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
 
 class UserResponseListCreateView(generics.ListCreateAPIView):
     queryset = UserResponse.objects.all()
     serializer_class = UserResponseSerializer
+    pagination_class = CustomPagination
+    parser_classes = (FormParser, MultiPartParser)
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
     def create(self, request, *args, **kwargs):
         user = request.user  # authentication is required
