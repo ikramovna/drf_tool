@@ -2,7 +2,7 @@ from django.contrib.auth.models import User
 from django.core import serializers
 from rest_framework import serializers
 from rest_framework.fields import SerializerMethodField
-from rest_framework.serializers import ModelSerializer
+from rest_framework.serializers import ModelSerializer, Serializer
 
 from .models import Quiz, Question, Choice, UserResponse
 
@@ -61,3 +61,10 @@ class UserResponseSerializer(ModelSerializer):
         return super().create(validated_data)
 
 
+class UserListSerializer(Serializer):
+    id = serializers.IntegerField()
+    title = serializers.CharField()
+    answer_user = serializers.SerializerMethodField()
+
+    def get_answer_user(self, obj):
+        return f"{obj['answer_user']}"
