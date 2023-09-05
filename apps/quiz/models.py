@@ -1,4 +1,5 @@
-from django.db.models import Model, CharField, TextField, ForeignKey, PositiveIntegerField, CASCADE, BooleanField
+from django.db.models import Model, CharField, TextField, ForeignKey, PositiveIntegerField, CASCADE, BooleanField, \
+    IntegerField
 
 from apps.shared.drf.models import BaseModel
 
@@ -14,7 +15,7 @@ class Quiz(BaseModel):
 class Question(BaseModel):
     quiz = ForeignKey(Quiz, CASCADE)
     text = TextField()
-    time_limit = PositiveIntegerField(default=30)  # Time limit in seconds
+    # time_limit = PositiveIntegerField(default=30)  # Time limit in seconds
 
     def __str__(self):
         return self.text
@@ -31,9 +32,8 @@ class Choice(BaseModel):
 
 class UserResponse(BaseModel):
     user = ForeignKey('auth.User', CASCADE)
-    question = ForeignKey(Question, CASCADE)
-    selected_choice = ForeignKey(Choice, CASCADE)
-    response_time = PositiveIntegerField()  # Time taken to answer in seconds
+    quize = ForeignKey('Quiz', CASCADE)
+    answer = IntegerField()
 
     def __str__(self):
-        return f"{self.user} - {self.question}"
+        return f"{self.user} - {self.quize}"

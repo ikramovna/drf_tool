@@ -1,2 +1,66 @@
 Integration with Google
 QuizeTest API ✅
+1) Quize List ✅
+2) Question List ✅
+3) User get zaprosda
+
+[
+    {
+        quize_id: 1
+        title: Python
+        anwer_user: 10 %
+    },
+    {
+        id: 2
+        title: java
+        anwer_user: 9 %
+    },
+
+]
+
+[
+    {
+        id:1
+        text: Lorem
+        chose: [
+            {
+                id:1
+                text: Lorem
+                is_correct: bool
+            },
+             {
+                id:3
+                text: Lorem
+                is_correct: bool
+            },
+             {
+                id:3
+                text: Lorem
+                is_correct: bool
+            }
+        ]
+    },
+    {
+        id:2
+        text: Lorem
+        chose: [
+            {
+                id:1
+                text: Lorem
+                is_correct: bool
+            },
+             {
+                id:3
+                text: Lorem
+                is_correct: bool
+            },
+             {
+                id:3
+                text: Lorem
+                is_correct: bool
+            }
+        ]
+    }
+    ....
+
+]

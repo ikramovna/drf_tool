@@ -1,15 +1,16 @@
-from django.utils import timezone
+from django.http import QueryDict
 from rest_framework import generics, status
+from rest_framework.generics import CreateAPIView, RetrieveAPIView
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 
-from .models import Quiz, Question, Choice, UserResponse
+from .models import Quiz, Question
 from .pagination import CustomPagination
-from .serializers import QuizSerializer, QuestionSerializer, ChoiceSerializer, UserResponseSerializer
+from .serializers import QuizSerializer, QuestionSerializer, UserResponseSerializer
 
 
-class QuizListCreateView(generics.ListCreateAPIView):
+class QuizListView(generics.ListAPIView):
     queryset = Quiz.objects.all()
     serializer_class = QuizSerializer
     pagination_class = CustomPagination
@@ -17,62 +18,35 @@ class QuizListCreateView(generics.ListCreateAPIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
 
 
-class QuestionListCreateView(generics.ListCreateAPIView):
+class QuestionListView(RetrieveAPIView):
     queryset = Question.objects.all()
     serializer_class = QuestionSerializer
-    pagination_class = CustomPagination
+    # pagination_class = CustomPagination
     parser_classes = (FormParser, MultiPartParser)
-    permission_classes = [IsAuthenticatedOrReadOnly]
 
-    def start_timer(self, request, pk=None):
-        question = self.get_object()
-        question.start_time = timezone.now()
-        question.save()
-        return Response({'message': 'Timer started.'})
+    lookup_url_kwarg = 'quiz_id'  # Custom lookup field name
 
-    def get_remaining_time(self, request, pk=None):
-        question = self.get_object()
-        if not question.start_time:
-            return Response({'message': 'Timer not started.'}, status=status.HTTP_400_BAD_REQUEST)
-
-        elapsed_time = (timezone.now() - question.start_time).total_seconds()
-        remaining_time = question.time_limit - elapsed_time
-        return Response({'remaining_time': remaining_time})
+    def get_queryset(self):
+        quiz_id = self.kwargs.get(self.lookup_url_kwarg)
+        if quiz_id:
+            return Question.objects.filter(quiz_id=quiz_id)
+        else:
+            return Question.objects.all()
 
 
-class ChoiceListCreateView(generics.ListCreateAPIView):
-    queryset = Choice.objects.all()
-    serializer_class = ChoiceSerializer
-    pagination_class = CustomPagination
-    parser_classes = (FormParser, MultiPartParser)
-    permission_classes = [IsAuthenticatedOrReadOnly]
-
-
-class UserResponseListCreateView(generics.ListCreateAPIView):
-    queryset = UserResponse.objects.all()
+class UserResponseCreateView(CreateAPIView):
     serializer_class = UserResponseSerializer
     pagination_class = CustomPagination
     parser_classes = (FormParser, MultiPartParser)
-    permission_classes = [IsAuthenticatedOrReadOnly]
 
-    def post(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
+    def create(self, request, *args, **kwargs):
+        data = QueryDict(f"question_id={request.data.get('question_id')}"
+                         f"&choice_id={request.data.get('choice_id')}"
+                         f"&user={request.user.pk}")
+        serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
-        serializer.save()
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
-        # Check if this is  last question for the user
-        user_responses_count = UserResponse.objects.filter(user=request.user).count()
-        total_questions = Question.objects.count()
 
-        if user_responses_count == total_questions:
-            # Calculate  marks and percentage
-            total_marks = UserResponse.objects.filter(user=request.user, question__choice__is_correct=True).count()
-            percentage = (total_marks / total_questions) * 100
-
-            return Response({
-                'message': 'Quiz completed!',
-                'total_marks': total_marks,
-                'percentage': percentage,
-            })
-
-        return Response({'message': 'Move to the next Quiz'})
