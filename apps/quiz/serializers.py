@@ -15,6 +15,8 @@ class QuizSerializer(ModelSerializer):
         fields = ('id', 'title', 'description')
 
 
+
+
 class ChoiceSerializer(ModelSerializer):
     class Meta:
         model = Choice
@@ -68,3 +70,4 @@ class UserListSerializer(Serializer):
 
     def get_answer_user(self, obj):
         return f"{obj['answer_user']}"
+
