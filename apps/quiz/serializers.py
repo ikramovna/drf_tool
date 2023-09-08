@@ -15,12 +15,10 @@ class QuizSerializer(ModelSerializer):
         fields = ('id', 'title', 'description')
 
 
-
-
 class ChoiceSerializer(ModelSerializer):
     class Meta:
         model = Choice
-        fields = ('id', 'text', 'is_correct')
+        fields = ('id', 'answer', 'is_correct')
 
 
 class QuestionSerializer(ModelSerializer):
@@ -32,7 +30,18 @@ class QuestionSerializer(ModelSerializer):
 
     class Meta:
         model = Question
-        fields = ('id', 'text', 'choices')
+        fields = ('id', 'question', 'choices')
+
+
+class QuestionModelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Question
+        fields = ('id', 'question', 'created_at')
+
+    def to_representation(self, instance):
+        rep = super().to_representation(instance)
+        rep['answers'] = instance.get_answers()
+        return rep
 
 
 class UserResponseSerializer(ModelSerializer):
@@ -70,4 +79,3 @@ class UserListSerializer(Serializer):
 
     def get_answer_user(self, obj):
         return f"{obj['answer_user']}"
-
