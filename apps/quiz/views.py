@@ -9,40 +9,43 @@ from typing_extensions import OrderedDict
 
 from .models import Quiz, Question, UserResponse
 from .pagination import CustomPagination
+from .response_json import CustomRenderer
 from .serializers import QuizSerializer, QuestionSerializer, UserResponseSerializer, UserListSerializer
 
 
 class QuizListView(generics.ListAPIView):
     queryset = Quiz.objects.all()
     serializer_class = QuizSerializer
+    renderer_classes = [CustomRenderer]
     parser_classes = (FormParser, MultiPartParser)
     permission_classes = [IsAuthenticatedOrReadOnly]
-    pagination_class = CustomPagination
+    # pagination_class = CustomPagination
 
-    def list(self, request, *args, **kwargs):
-        queryset = self.filter_queryset(self.get_queryset())
-        response_data = OrderedDict()
-        response_data["message"] = None
-        response_data["status"] = "ok"
-
-        page = self.paginate_queryset(queryset)
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            obj = self.get_paginated_response(serializer.data)
-            return obj
-
-        serializer = self.get_serializer(queryset, many=True)
-        response_data["data"] = {
-            "quize": serializer.data
-        }
-
-        return Response(response_data)
+    # def list(self, request, *args, **kwargs):
+    #     queryset = self.filter_queryset(self.get_queryset())
+    #     response_data = OrderedDict()
+    #     response_data["message"] = None
+    #     response_data["status"] = "ok"
+    #
+    #     page = self.paginate_queryset(queryset)
+    #     if page is not None:
+    #         serializer = self.get_serializer(page, many=True)
+    #         obj = self.get_paginated_response(serializer.data)
+    #         return obj
+    #
+    #     serializer = self.get_serializer(queryset, many=True)
+    #     response_data["data"] = {
+    #         "quize": serializer.data
+    #     }
+    #
+    #     return Response(response_data)
 
 
 class QuestionListView(ListAPIView):
     queryset = Question.objects.all()
     serializer_class = QuestionSerializer
     pagination_class = CustomPagination
+    renderer_classes = (CustomRenderer,)
     parser_classes = (FormParser, MultiPartParser)
     lookup_url_kwarg = 'quiz_id'
 
@@ -53,27 +56,6 @@ class QuestionListView(ListAPIView):
             return Question.objects.filter(quiz_id=quiz_id)
         else:
             return Question.objects.all()
-
-    def list(self, request, *args, **kwargs):
-        queryset = self.filter_queryset(self.get_queryset())
-        response_data = OrderedDict()
-        response_data["message"] = None
-        response_data["status"] = "ok"
-
-        page = self.paginate_queryset(queryset)
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            obj = self.get_paginated_response(serializer.data)
-            return obj
-
-        serializer = self.get_serializer(queryset, many=True)
-        response_data["data"] = {
-            "question": serializer.data
-        }
-
-        return Response(response_data)
-
-
 
 
 class UserResponseCreateView(CreateAPIView):
@@ -90,8 +72,6 @@ class UserResponseCreateView(CreateAPIView):
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-
-
 
 
 class UserListAPIView(APIView):
@@ -114,5 +94,3 @@ class UserListAPIView(APIView):
 
         serializer = UserListSerializer(response_data, many=True)
         return Response(serializer.data)
-
-

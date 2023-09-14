@@ -2,6 +2,9 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 
+import apps.quiz.response_json
+from apps.quiz.response_json import CustomRenderer
+
 load_dotenv()
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -13,6 +16,7 @@ ALLOWED_HOSTS = ['*']
 
 MY_APPS = [
     'apps.quiz',
+    'apps.trello',
     'apps.shared',
 ]
 
@@ -20,18 +24,17 @@ THIRD_PARTY_APPS = [
     'drf_yasg',
     'rest_framework',
 
-
 ]
 
 INSTALLED_APPS = [
-     'django.contrib.admin',
-     'django.contrib.auth',
-     'django.contrib.contenttypes',
-     'django.contrib.sessions',
-     'django.contrib.messages',
-     'django.contrib.staticfiles',
+                     'django.contrib.admin',
+                     'django.contrib.auth',
+                     'django.contrib.contenttypes',
+                     'django.contrib.sessions',
+                     'django.contrib.messages',
+                     'django.contrib.staticfiles',
 
- ] + MY_APPS + THIRD_PARTY_APPS
+                 ] + MY_APPS + THIRD_PARTY_APPS
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -68,7 +71,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'root.wsgi.application'
-
 
 DATABASES = {
     'default': {
@@ -113,15 +115,13 @@ MEDIA_ROOT = os.path.join(BASE_DIR / 'media')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-
 REST_FRAMEWORK = {
     # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     # 'PAGE_SIZE': 10,
+    "DEFAULT_RENDERER_CLASSES": [
+        'apps.quiz.response_json.CustomRenderer',
+    ],
+    'DEFAULT_PARSER_CLASSES': [
+        'rest_framework.parsers.JSONParser',
+    ],
 }
-
-
-
-
-
-
-
