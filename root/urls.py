@@ -12,7 +12,6 @@ urlpatterns = [
 
     path('admin/', admin.site.urls),
     path('', include('apps.quiz.urls')),
-    path('', include('apps.trello.urls')),
 
 ] + swagger_urls + static(MEDIA_URL, document_root=MEDIA_ROOT) + static(STATIC_URL,
                                                                       document_root=STATIC_ROOT)

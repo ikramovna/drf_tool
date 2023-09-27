@@ -16,7 +16,6 @@ ALLOWED_HOSTS = ['*']
 
 MY_APPS = [
     'apps.quiz',
-    'apps.trello',
     'apps.shared',
 ]
 
