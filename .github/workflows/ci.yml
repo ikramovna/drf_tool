@@ -1,0 +1,32 @@
+name: CI for ready to deploy
+
+on:
+  pull_request:
+    branch:
+      - ezozbek
+  push:
+    branch:
+      - ezozbek
+
+job:
+  runs-on: ubunut-lastest
+  services:
+    postgres:
+      image: postgres
+      env:
+        POSTGRES_DB: postgres
+        POSTGRES_USER: postgres
+        POSTGRES_PASSWORD: 1
+      ports:
+        5432:5432
+  steps:
+    - name: Checkout
+      users: actions/checkout@v2
+    - name: setup python enviroment
+      users: actions/checkout@v2
+      with:
+        python-version: '3.10'
+    - name: Install requirements
+      run: pip install -r requirements.txt
+    - name: Run Migrations
+      run: python manage.py migrate
