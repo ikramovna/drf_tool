@@ -8,7 +8,7 @@ on:
     branch:
       - ezozbek
 
-job:
+jobs:
   runs-on: ubunut-lastest
   services:
     postgres:
