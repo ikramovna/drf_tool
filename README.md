@@ -9,22 +9,18 @@ pip install celery
 
 ## Step 2 — Configure Celery:
 Create a Celery configuration file. You typically place this in your project directory or within your Django app. The file should define your Celery application and its settings. For example, you can create a file named 'celery.py':
-
 ```bash
+
 from __future__ import absolute_import, unicode_literals
 import os
 from celery import Celery
 
-# Set the default Django settings module for the 'celery' program.
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'your_project_name.settings')
 
 app = Celery('your_project_name')
 
-# Using a string here means the worker doesn't have to serialize
-# the configuration object to child processes.
 app.config_from_object('django.conf:settings', namespace='CELERY')
 
-# Load task modules from all registered Django app configs.
 app.autodiscover_tasks()
 ```
 ## Step 3 — Configure Django Settings: 
