@@ -1,6 +1,16 @@
 # Setting Up Celery and Redis Your Project with Ngnix
 ## Step 1 — Installing Celery
 
+First install redis 
+
+```bash
+sudo apt-get install redis-server
+```
+
+```bash
+sudo service redis-server start
+```
+
 To install Celery, simply run the following command in your terminal:
 
 ```bash
@@ -29,8 +39,8 @@ In your Django project's settings (settings.py), configure Celery settings. Add 
 ```bash
 # Celery Configuration Options
 
-CELERY_BROKER_URL = 'redis://redis:6379/0'
-CELERY_RESULT_BACKEND = 'redis://redis:6379/0'
+CELERY_BROKER_URL = 'redis://redis or 127.0.0.1:6379/0'
+CELERY_RESULT_BACKEND = 'redis://redis or 127.0.0.1:6379/0'
 
 CELERY_TIMEZONE = "Asia/Tashkent"
 
