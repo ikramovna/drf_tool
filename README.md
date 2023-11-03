@@ -39,8 +39,8 @@ In your Django project's settings (settings.py), configure Celery settings. Add 
 ```bash
 # Celery Configuration Options
 
-CELERY_BROKER_URL = 'redis://redis'
-CELERY_RESULT_BACKEND = 'redis://redis'
+CELERY_BROKER_URL = 'redis://redis:6379/0'
+CELERY_RESULT_BACKEND = 'redis://redis:6379/0'
 
 CELERY_TIMEZONE = "Asia/Tashkent"
 
