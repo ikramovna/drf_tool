@@ -17,11 +17,13 @@ ALLOWED_HOSTS = ['*']
 MY_APPS = [
     'apps.quiz',
     'apps.shared',
+    'apps.taxi',
 ]
 
 THIRD_PARTY_APPS = [
     'drf_yasg',
     'rest_framework',
+    'import_export',
 
 ]
 
@@ -124,3 +126,4 @@ REST_FRAMEWORK = {
         'rest_framework.parsers.JSONParser',
     ],
 }
+
