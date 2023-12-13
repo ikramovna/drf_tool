@@ -28,7 +28,7 @@ class Driver(Model):
 
 
 class DriverSeat(Model):
-    driver = ForeignKey(Driver, on_delete=CASCADE)
+    driver = ForeignKey('auth.User', on_delete=CASCADE)
     seat = ForeignKey(Seat, on_delete=CASCADE)
     is_booked = BooleanField(default=False)
 
@@ -45,3 +45,6 @@ class Booking(Model):
     seat = ForeignKey(Seat, on_delete=CASCADE)
     user = ForeignKey('auth.User', on_delete=CASCADE)
     total_price = DecimalField(max_digits=10, decimal_places=2)
+
+
+
